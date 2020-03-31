@@ -92,10 +92,22 @@
         }
 
         // Combine reducers is smart enough to give each reducer the right piece of the state, and the action
-        const store = Redux.createStore(Redux.CombineReducers({
+        const store = Redux.createStore(Redux.combineReducers({
             todos,
             goals
         }));
+
+        const checkAndDispatch = (store, action) => {
+            if(action.type === ADD_TODO && action.todo.name.toLowerCase().includes('bitcoin')) {
+                return alert('You are smart, but poor!')
+            }
+
+            if(action.type === ADD_GOAL && action.goal.name.toLowerCase().includes('bitcoin')) {
+                return alert('You are smart, but poor!')
+            }
+
+            return store.dispatch(action);
+        }
 
         store.subscribe(() => {
             console.log('The new state is: ', store.getState())
@@ -116,7 +128,7 @@
             const value = input.value;
             input.value = '';
 
-            store.dispatch(addTodoAction({
+            checkAndDispatch(store, addTodoAction({
                 name: value,
                 complete: false,
                 id: generateId()
@@ -128,22 +140,22 @@
             const value = input.value;
             input.value = '';
 
-            store.dispatch(addGoalAction({
+            checkAndDispatch(store, addGoalAction({
                 name: value,
                 id: generateId()
             }));
         };
 
         function toggleTodo (id) {
-            store.dispatch(toggleTodoAction(id));
+            checkAndDispatch(store, toggleTodoAction(id));
         }
 
         function removeTodo (id) {
-            store.dispatch(removeTodoAction(id));
+            checkAndDispatch(store, removeTodoAction(id));
         }
 
         function removeGoal (id) {
-            store.dispatch(removeGoalAction(id));
+            checkAndDispatch(store, removeGoalAction(id));
         }
 
         function createRemoveButton (callback) {
