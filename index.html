@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Todos & Goals</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
 </head>
 <body>
     <div>
@@ -129,7 +130,7 @@
             }
         }
 
-        const store = createStore(app)
+        const store = Redux.createStore(app)
 
         store.subscribe(() => {
             console.log('The new state is: ', store.getState())
