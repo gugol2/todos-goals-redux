@@ -91,13 +91,7 @@
             }
         }
 
-        // Combine reducers is smart enough to give each reducer the right piece of the state, and the action
-        const store = Redux.createStore(Redux.combineReducers({
-            todos,
-            goals
-        }));
-
-        const checkAndDispatch = (store, action) => {
+        const checker = (store) => (next) => (action) => {
             if(action.type === ADD_TODO && action.todo.name.toLowerCase().includes('bitcoin')) {
                 return alert('You are smart, but poor!')
             }
@@ -106,8 +100,15 @@
                 return alert('You are smart, but poor!')
             }
 
-            return store.dispatch(action);
-        }
+            // in the case of only one middleware next is dispatch
+            return next(action);
+        };
+
+        // Combine reducers is smart enough to give each reducer the right piece of the state, and the action
+        const store = Redux.createStore(Redux.combineReducers({
+            todos,
+            goals
+        }), Redux.applyMiddleware(checker));
 
         store.subscribe(() => {
             console.log('The new state is: ', store.getState())
@@ -128,7 +129,7 @@
             const value = input.value;
             input.value = '';
 
-            checkAndDispatch(store, addTodoAction({
+            store.dispatch(addTodoAction({
                 name: value,
                 complete: false,
                 id: generateId()
@@ -140,22 +141,22 @@
             const value = input.value;
             input.value = '';
 
-            checkAndDispatch(store, addGoalAction({
+            store.dispatch(addGoalAction({
                 name: value,
                 id: generateId()
             }));
         };
 
         function toggleTodo (id) {
-            checkAndDispatch(store, toggleTodoAction(id));
+            store.dispatch(toggleTodoAction(id));
         }
 
         function removeTodo (id) {
-            checkAndDispatch(store, removeTodoAction(id));
+            store.dispatch(removeTodoAction(id));
         }
 
         function removeGoal (id) {
-            checkAndDispatch(store, removeGoalAction(id));
+            store.dispatch(removeGoalAction(id));
         }
 
         function createRemoveButton (callback) {
